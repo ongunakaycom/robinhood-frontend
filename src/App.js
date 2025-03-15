@@ -13,7 +13,6 @@ import GoPremium from './components/CheckoutForm/CheckoutForm.jsx';
 import VerificationPage from './components/WelcomePage/Signup/VerificationPage/VerificationPage.jsx';
 import ProtectedRoute from './components/WelcomePage/ProtectedRoute/ProtectedRoute.jsx';
 import GuestChatPage from './components/WelcomePage/GuestChatPage/GuestChatPage.jsx';
-import MyDates from './components/Dashboard/MyDates/MyDates.jsx';
 
 function App() {
   return (
@@ -26,7 +25,6 @@ function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/password-retrieve" element={<PasswordRetrieve />} />
           <Route path="/account-settings" element={<AccountSettings />} />
-          <Route path="/mydates" element={<MyDates />} />
           <Route path="/go-premium" element={<GoPremium />} />
           <Route path="/verification" element={<VerificationPage />} />
           <Route path="/about" element={<AboutPage />} />

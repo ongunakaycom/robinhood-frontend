@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getDatabase, ref } from 'firebase/database';
-import { Date_Manager } from '../../Databases/date_manager'; // Make sure to import this if it's necessary
 import DashboardHeader from './DashboardHeader/DashboardHeader';
 import ChatContainer from '../ChatContainer/ChatContainer';
 import Footer from '../Footer/Footer'; 
@@ -15,7 +14,6 @@ const Dashboard = () => {
   const defaultAvatar = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'; 
   const [userAvatar, setUserAvatar] = useState(defaultAvatar);
   const [userMessagesRef, setUserMessagesRef] = useState(null);
-  const [dateManager, setDateManager] = useState();
   const auth = getAuth(); 
   const db = getDatabase();
 
@@ -55,7 +53,7 @@ const Dashboard = () => {
     async function fetchData() {
       const userMessagesRef = ref(db, `messages/${userId}`);
       setUserMessagesRef(userMessagesRef);
-      setDateManager(Date_Manager(userId)); // Ensure Date_Manager is correctly imported
+      // Removed dateManager code as it's no longer needed
     }
 
     fetchData();
@@ -69,7 +67,6 @@ const Dashboard = () => {
           userMessagesRef={userMessagesRef}   
           displayName={displayName} 
           userAvatar={userAvatar}   
-          dateManager={dateManager}
           error={error}
           setError={setError}
         />
