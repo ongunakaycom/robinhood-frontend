@@ -15,15 +15,14 @@ export const AyaForUser = (userId) => {
   return aya;
 };
 
-// You can also export the fetchAIResponse if needed
 export const fetchAIResponse = async (inputText) => {
   try {
-    const response = await fetch('https://robinhood-functions.vercel.app/api/ai-response', {
-      method: 'POST',
+    const response = await fetch("https://robinhood-functions.vercel.app/api/ai-response", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ text: inputText }),
+      body: JSON.stringify({ userPrompt: inputText }),
     });
 
     const data = await response.json();
@@ -33,3 +32,4 @@ export const fetchAIResponse = async (inputText) => {
     return "An error occurred while fetching a response.";
   }
 };
+
