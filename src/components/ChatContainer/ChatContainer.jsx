@@ -187,6 +187,7 @@ const ChatContainer = ({
       event.preventDefault();
       if (!aya) {
         console.error("Aya not initialized");
+        setError('Aya is not initialized. Please try again later.');
         return;
       }
       if (!inputText.trim()) {
@@ -203,7 +204,7 @@ const ChatContainer = ({
         console.error('Error with handling submit message:', error);
         setError('Error with handling submit message');
       }
-    }; 
+    };    
 
     return (
       <div className="aya-container">

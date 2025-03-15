@@ -48,13 +48,14 @@ const GuestChatPage = () => {
     if (!guestUserId) return;
     if (!db) return;
     async function fetchAya() {
-      const aya = await AyaForGuest(guestUserId);
-      setAya(aya);
+      // Mock response for testing
+      setAya({ id: '1', text: 'Hello, Guest!' });
       const userMessagesRef = ref(db, `messages/guestsessions/${guestUserId}`);
       setUserMessagesRef(userMessagesRef);
     }
     fetchAya();
-  }, [db,guestUserId]);
+  }, [db, guestUserId]);
+  
 
   return (
     <div className="GuestChatPage">
