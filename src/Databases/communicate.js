@@ -6,7 +6,6 @@ export const Communicator = (userId) => {
 
     const approach = async (args) => {
       const testmode = true;
-        // get from args.requestedUserId later! double check with "open matches" if valid id
 
         let requestedUserId = args.requestedUserId;
         if(testmode){
