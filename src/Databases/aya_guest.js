@@ -7,7 +7,7 @@ const {
   const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
   const genAI = new GoogleGenerativeAI(apiKey);
 
-  const ayaBackendLink = "https://us-central1-aya-cloudfunctions.cloudfunctions.net/app/";
+  const ayaBackendLink = "";
 
   const safetySettings = [
     {
