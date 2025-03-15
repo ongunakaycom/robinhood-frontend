@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 import { AiOutlineSend } from 'react-icons/ai';
 import Alert from '../../Alert/Alert'; 
 import './ChatInput.css';
@@ -7,15 +7,15 @@ const ChatInput = ({ inputText, setInputText, onSubmit, isSending }) => {
   const [alertMessage, setAlertMessage] = useState('');
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault();  // Correctly prevent default action
 
     if (!inputText.trim()) {
       setAlertMessage('Please type something');
-      setTimeout(() => setAlertMessage(''), 3000);  // Clear alert after 3 seconds
+      setTimeout(() => setAlertMessage(''), 3000);
       return;
     }
 
-    onSubmit(event);  // Pass the event to onSubmit (parent handler)
+    onSubmit(event);  // Pass the event to onSubmit
   };
 
   return (
@@ -26,7 +26,7 @@ const ChatInput = ({ inputText, setInputText, onSubmit, isSending }) => {
         <input
           type="text"
           value={inputText}
-          onChange={(e) => setInputText(e.target.value)}  // Handle input change
+          onChange={(e) => setInputText(e.target.value)}
           placeholder="Type here..."
           className="chat-text-input"
           disabled={isSending}

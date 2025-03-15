@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
-import { getDatabase, ref } from 'firebase/database';
+import { getFirestore, doc, getDoc, setDoc} from "firebase/firestore"; //addDoc, query, where, onSnapshot
+import { getDatabase, ref} from 'firebase/database';
+import { AyaForUser} from '../../Databases/aya_brain';
 import DashboardHeader from './DashboardHeader/DashboardHeader';
 import ChatContainer from '../ChatContainer/ChatContainer';
 import Footer from '../Footer/Footer'; 
-import './Dashboard.css';
+import './Dashboard.css'; 
 
 const Dashboard = () => {
   const [error, setError] = useState(null);
@@ -13,7 +14,10 @@ const Dashboard = () => {
   const [displayName, setDisplayName] = useState('');
   const defaultAvatar = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'; 
   const [userAvatar, setUserAvatar] = useState(defaultAvatar);
+  const [aya, setAya] = useState();
+  const [communicator, setCommunicator] = useState();
   const [userMessagesRef, setUserMessagesRef] = useState(null);
+  const [dateManager, setDateManager] = useState();
   const auth = getAuth(); 
   const db = getDatabase();
 
@@ -48,31 +52,38 @@ const Dashboard = () => {
   }, [auth, displayName, userAvatar]);
 
   useEffect(() => {
-    if (!userId || !db) return;
-
-    async function fetchData() {
+    //can go into effect above!
+    if (!userId) return;
+    if (!db) return;
+    async function fetchAya() {
+      const aya = await AyaForUser(userId);
+      setAya(aya);
+      const c = await Communicator(userId);
+      setCommunicator(c);
       const userMessagesRef = ref(db, `messages/${userId}`);
       setUserMessagesRef(userMessagesRef);
-      // Removed dateManager code as it's no longer needed
+      setDateManager(Date_Manager(userId))
     }
-
-    fetchData();
+    fetchAya();
   }, [userId, db]);
 
   return (
     <div className="Dashboard">
-      <DashboardHeader />
-      <main className="dashboard-content">
-        <ChatContainer    
-          userMessagesRef={userMessagesRef}   
-          displayName={displayName} 
-          userAvatar={userAvatar}   
-          error={error}
-          setError={setError}
-        />
-      </main>
-      <Footer /> 
-    </div>
+    <DashboardHeader />
+    <main className="dashboard-content">
+      <ChatContainer    
+        userMessagesRef={userMessagesRef}   
+        displayName={displayName} 
+        userAvatar={userAvatar}   
+        aya={aya}  
+        communicator={communicator}
+        dateManager={dateManager}
+        error={error}
+        setError={setError}
+      />
+    </main>
+    <Footer /> 
+  </div>
   );
 };
 
