@@ -28,3 +28,19 @@ export const sendMessageToChatbot = async (message) => {
         return 'Sorry, something went wrong. Please try again later.'; // Fallback message
     }
 };
+
+// Function for AyaForUser (you can modify this logic as needed)
+export const AyaForUser = (userInput) => {
+    // Example function that uses sendMessageToChatbot
+    // You can customize this function to handle specific logic related to "AyaForUser"
+    
+    // This can be the function that will be called when you want to interact with the chatbot
+    sendMessageToChatbot(userInput)
+        .then((response) => {
+            console.log("AyaForUser response: ", response); // Log or handle the chatbot's response
+            // Additional logic based on the response can be added here
+        })
+        .catch((error) => {
+            console.error("Error with AyaForUser:", error);
+        });
+};
