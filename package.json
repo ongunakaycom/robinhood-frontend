@@ -2,7 +2,7 @@
   "name": "robinhoodbot",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://api.deepseek.com",
+  "proxy": "https://deep-seek-chat-bot-python.onrender.com",
   "dependencies": {
     "@firebase/firestore": "^4.7.1",
     "@google/generative-ai": "^0.17.1",
