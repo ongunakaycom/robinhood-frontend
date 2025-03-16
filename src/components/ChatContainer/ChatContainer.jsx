@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from
 import MessageList from './MessageList/MessageList.jsx';
 import ChatInput from './ChatInput/ChatInput.jsx';
 import { onValue, push, query, limitToLast, orderByChild } from 'firebase/database';
+import { sendMessageToChatbot } from '../../Databases/aya_brain'; // Import the function to communicate with DeepSeek API
 import './ChatContainer.css'; 
 
 const ChatContainer = ({
@@ -51,16 +52,16 @@ const ChatContainer = ({
   const fetchBotResponse = async (inputText) => {
     setIsSending(true);
 
-    // Basic hardcoded response logic (you can replace this with any custom logic for the chatbot)
-    let responseText = "I'm sorry, I don't understand that.";
-    if (inputText.toLowerCase().includes("hello")) {
-      responseText = "Hello! How can I assist you today?";
-    } else if (inputText.toLowerCase().includes("how are you")) {
-      responseText = "I'm just a bot, but I'm doing well. How about you?";
+    // Use DeepSeek API to get a response
+    try {
+      const botResponse = await sendMessageToChatbot(inputText);
+      setIsSending(false); // Reset sending state
+      return botResponse;
+    } catch (error) {
+      console.error("Error with DeepSeek API:", error);
+      setIsSending(false); // Reset sending state
+      return 'Sorry, something went wrong. Please try again later.'; // Fallback message
     }
-
-    setIsSending(false); // Reset the sending state regardless of success or failure
-    return responseText;
   };
 
   const handleSubmitMessage = async (event) => {

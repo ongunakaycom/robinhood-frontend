@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import { getDatabase, ref } from 'firebase/database';
-import { AyaForUser } from '../../Databases/aya_brain';
 import DashboardHeader from './DashboardHeader/DashboardHeader';
 import ChatContainer from '../ChatContainer/ChatContainer';
 import Footer from '../Footer/Footer'; 
@@ -14,7 +13,6 @@ const Dashboard = () => {
   const [displayName, setDisplayName] = useState('');
   const defaultAvatar = 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png'; 
   const [userAvatar, setUserAvatar] = useState(defaultAvatar);
-  const [aya, setAya] = useState();
   const [userMessagesRef, setUserMessagesRef] = useState(null);
   const auth = getAuth(); 
   const db = getDatabase();
@@ -52,14 +50,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (!userId) return;
     if (!db) return;
-    async function fetchAya() {
-      const ayaInstance = await AyaForUser(userId);
-      setAya(ayaInstance);
-      const userMessagesRef = ref(db, `messages/${userId}`);
-      setUserMessagesRef(userMessagesRef);
-    }
-
-    fetchAya();
+    const userMessagesRef = ref(db, `messages/${userId}`);
+    setUserMessagesRef(userMessagesRef);
   }, [userId, db]);
 
   return (
@@ -70,7 +62,6 @@ const Dashboard = () => {
           userMessagesRef={userMessagesRef}   
           displayName={displayName} 
           userAvatar={userAvatar}   
-          aya={aya}  
           error={error}
           setError={setError}
         />
