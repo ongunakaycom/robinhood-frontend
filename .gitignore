@@ -27,3 +27,6 @@ GOOGLE_APPLICATION_CREDENTIAL.json
 # VSCode settings
 .vscode/
 node_modules
+/.firebase
+*.cache
+.firebase/hosting.YnVpbGQ.cache
