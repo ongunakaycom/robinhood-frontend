@@ -1,35 +1,30 @@
-// Ensure the function is exported correctly
-export const AyaForUser = (userId) => {
-  // Logic to create and return Aya instance for the user
-  // Example:
-  const aya = {
-    userId,
-    getAIResponse: async (inputText) => {
-      // Your AI response fetching logic
-      const response = await fetchAIResponse(inputText); // Assuming fetchAIResponse is defined elsewhere
-      return response;
-    },
-    // You can add more methods as needed
-  };
+// Importing necessary dependencies
+const API_URL = 'https://deep-seek-chat-bot-python.onrender.com'; // The chatbot endpoint
 
-  return aya;
+// Function to send a message to the chatbot and get the response
+export const sendMessageToChatbot = async (message) => {
+    try {
+        // Sending a POST request to the chatbot API
+        const response = await fetch(`${API_URL}/chat`, {
+            method: 'POST', // We are sending a POST request
+            headers: {
+                'Content-Type': 'application/json', // Set the content type to JSON
+            },
+            body: JSON.stringify({ message: message }), // Body of the request with the user message
+        });
+
+        // Check if the response is successful
+        if (!response.ok) {
+            throw new Error('Failed to send message to chatbot');
+        }
+
+        // Parse the JSON response from the API
+        const data = await response.json();
+        
+        // Assuming the chatbot API responds with a message property
+        return data.message; 
+    } catch (error) {
+        console.error('Error:', error);
+        return 'Sorry, something went wrong. Please try again later.'; // Fallback message
+    }
 };
-
-export const fetchAIResponse = async (inputText) => {
-  try {
-    const response = await fetch("https://robinhood-functions.vercel.app/api/ai-response", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userPrompt: inputText }),
-    });
-
-    const data = await response.json();
-    return data.response || "Sorry, I couldn't process that.";
-  } catch (error) {
-    console.error("Error fetching AI response:", error);
-    return "An error occurred while fetching a response.";
-  }
-};
-
