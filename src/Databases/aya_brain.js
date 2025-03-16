@@ -4,8 +4,8 @@ const API_URL = 'https://deep-seek-chat-bot-python.onrender.com'; // The chatbot
 // Function to send a message to the chatbot and get the response
 export const sendMessageToChatbot = async (message) => {
     try {
-        // Sending a POST request to the chatbot API
-        const response = await fetch('/ask', {  // No need to specify the full URL during development
+        // Using the API_URL variable in the fetch request
+        const response = await fetch(`${API_URL}/ask`, {  // Use the full URL now
             method: 'POST', // We are sending a POST request
             headers: {
                 'Content-Type': 'application/json', // Set the content type to JSON
