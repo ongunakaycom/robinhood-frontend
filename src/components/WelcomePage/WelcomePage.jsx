@@ -12,7 +12,7 @@ function WelcomePage() {
 
 
   const handleLearnMore = () => {
-    navigate("/about"); 
+    navigate("/https://t.me/CryptoTradersClub"); 
   };
 
 
