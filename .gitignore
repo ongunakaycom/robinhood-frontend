@@ -30,3 +30,4 @@ node_modules
 /.firebase
 *.cache
 .firebase/hosting.YnVpbGQ.cache
+*.cache
