@@ -26,4 +26,10 @@
     cursor: pointer;
 }
 
-  
+:focus-visible {
+    outline: none; /* Removes the default outline */
+}
+
+.dashboard-header-button:focus-visible {
+    outline: none; /* Ensures no outline is shown on focus */
+}
