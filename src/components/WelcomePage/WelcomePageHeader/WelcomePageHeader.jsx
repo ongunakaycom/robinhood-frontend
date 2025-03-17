@@ -66,15 +66,14 @@ function WelcomePageHeader() {
 
   return (
     <Navbar sticky="top" className="custom-navbar px-4" expand="lg">
-    <Navbar.Brand href="/" className="text-start flex-grow-1">
+    <Navbar.Brand className="text-start flex-grow-1">
       <img
         src="./img/logo.jpg"
         alt="Aya Matchmaker Logo"
         width="40"
         height="40"
       />
-    </Navbar.Brand>
-  
+    </Navbar.Brand>  
     <Navbar.Toggle aria-controls="navbarNav" />
     <Navbar.Collapse id="navbarNav">
       <Row className="ms-auto">

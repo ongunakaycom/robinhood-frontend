@@ -43,14 +43,13 @@ const DashboardHeader = () => {
   return (
     <header className='dashboard-header px-4'>
       <div className="dashboard-title" >
-        <img
-          src="./img/logo.svg"
-          alt="Aya Matchmaker Logo"
-          width="40"
-          height="40"
-          className="d-inline-block align-top DashboardLogo"
-          onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer' }}
-        />{' '}
+      <img
+        src="./img/logo.svg"
+        alt="Aya Matchmaker Logo"
+        width="40"
+        height="40"
+        className="d-inline-block align-top DashboardLogo"
+      />
       </div>
       <Dropdown>
         <Dropdown.Toggle variant="transparent" className="dashboard-header-button">
