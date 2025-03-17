@@ -68,11 +68,10 @@ function WelcomePageHeader() {
     <Navbar sticky="top" className="custom-navbar px-4" expand="lg">
     <Navbar.Brand href="/" className="text-start flex-grow-1">
       <img
-        src="./img/logo.svg"
+        src="./img/logo.jpg"
         alt="Aya Matchmaker Logo"
         width="40"
         height="40"
-        className="d-inline-block align-top logoWhite"
       />
     </Navbar.Brand>
   
