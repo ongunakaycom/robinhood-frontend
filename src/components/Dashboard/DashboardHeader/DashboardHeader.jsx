@@ -1,7 +1,7 @@
 // DashboardHeader.jsx
 import React, { useEffect } from 'react';
 import { Dropdown } from 'react-bootstrap';
-import { AiOutlineUser, AiOutlineLogout, AiOutlineSetting, AiOutlineHeart } from 'react-icons/ai';
+import { AiOutlineUser, AiOutlineLogout, AiOutlineSetting } from 'react-icons/ai';
 import { BsChatLeft } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom'; 
 import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
