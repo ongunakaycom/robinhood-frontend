@@ -23,7 +23,7 @@ function WelcomePage() {
         <Container>
           <Row>
             <Col md={6} className="w-100">
-              <h1 className={`mb-4`} >
+              <h1 className={`mb-4 mt-5 pt-3`} >
                 {t('heading')}
               </h1>
               <p>
