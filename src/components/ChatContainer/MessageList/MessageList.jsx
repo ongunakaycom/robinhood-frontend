@@ -25,7 +25,7 @@ const MessageList = ({ messages, messagesEndRef, displayname, userAvatar }) => {
           {message.sender !== 'user' ? (
             <div className="avatar-container ai-avatar">
               <img src="/img/aya-avatar.jpg" alt="Avatar" className="avatar" />
-              <p className="message-name text-light">AYA</p>
+              <p className="message-name text-light">Robin Hood</p>
               <span className="message-timestamp">{formatTimestamp(message.timestamp)}</span>
             </div>
             ) : (

@@ -5,7 +5,7 @@ html, body {
   padding: 0;
   overflow: hidden;
   scrollbar-width: thin; /* Sets the scrollbar width to thin */
-  scrollbar-color: #683B2B #BFA380; /* Thumb color followed by track color */
+  scrollbar-color: #ffffff #38459a; /* Thumb color followed by track color */
   -webkit-overflow-scrolling: touch; /* Ensures smooth scrolling on touch devices */
   scroll-behavior: smooth; /* Smooth scrolling for modern browsers */
 }
@@ -16,16 +16,16 @@ body::-webkit-scrollbar {
 }
 
 body::-webkit-scrollbar-track {
-  background-color: #BFA380;
+  background-color: #38459a;
 }
 
 body::-webkit-scrollbar-thumb {
-  background-color: #683B2B;
+  background-color: #38459a;
   border-radius: 16px;
 }
 
 body::-webkit-scrollbar-thumb:hover {
-  background-color: #5d2f27;
+  background-color: #38459a;
 }
 
 body::-webkit-scrollbar-button {
