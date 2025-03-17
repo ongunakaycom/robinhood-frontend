@@ -122,8 +122,8 @@ const SignInComponent = () => {
               <div className="recaptcha-container">
                 {/* Replace ReCAPTCHA with hCaptcha */}
                 <HCaptcha
-                  sitekey={process.env.REACT_APP_HCAPTCHA_SITE_KEY} // Use the hCaptcha site key
-                  onVerify={handleCaptchaChange}  // hCaptcha token will be passed here
+                  sitekey={process.env.REACT_APP_HCAPTCHA_SITE_KEY}  // This should be correct
+                  onVerify={handleCaptchaChange}  // Handles the token after successful verification
                 />
               </div>
 
