@@ -31,3 +31,15 @@ node_modules
 *.cache
 .firebase/hosting.YnVpbGQ.cache
 *.cache
+
+# Firebase
+.firebase/
+.firebase/
+*.cache
+.firebase/hosting.YnVpbGQ.cache
+.firebase/hosting.*.cache
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc
+firebase-debug.log*
+ui-debug.log*
