@@ -2,7 +2,7 @@
   "name": "robinhoodbot",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://deep-seek-chat-bot-python.onrender.com",
+  "proxy": "https://sunny-empathy-production-491e.up.railway.app",
   "dependencies": {
     "@firebase/firestore": "^4.7.1",
     "@google/generative-ai": "^0.17.1",

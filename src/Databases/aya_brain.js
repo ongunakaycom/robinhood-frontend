@@ -1,43 +1,38 @@
-// Importing necessary dependencies
-const API_URL = 'https://deep-seek-chat-bot-python.onrender.com'; // The chatbot endpoint
+// Directly using the correct URL
+const API_URL = "https://sunny-empathy-production-491e.up.railway.app";  // Direct URL
 
-// Function to send a message to the chatbot and get the response
+// Function to send a message to the chatbot via Railway API Gateway
 export const sendMessageToChatbot = async (message) => {
     try {
-        // Using the API_URL variable in the fetch request
-        const response = await fetch(`${API_URL}/ask`, {  // Use the full URL now
-            method: 'POST', // We are sending a POST request
+        const response = await fetch(`${API_URL}/api/chat`, {
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json', // Set the content type to JSON
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: message }), // Body of the request with the user message
+            body: JSON.stringify({ message: message }),
         });
 
         // Check if the response is successful
         if (!response.ok) {
-            throw new Error('Failed to send message to chatbot');
+            throw new Error('Failed to send message to Railway API');
         }
 
-        // Parse the JSON response from the API
+        // Parse the response from Railway API (which forwards it to Render API)
         const data = await response.json();
         
-        // Assuming the chatbot API responds with a response property
-        return data.response;  // Ensure this matches the backend response structure
+        // Assuming the Render API sends a "response" property
+        return data.response;  // Make sure the response structure is correct
     } catch (error) {
         console.error('Error:', error);
-        return 'Sorry, something went wrong. Please try again later.'; // Fallback message
+        return 'Sorry, something went wrong. Please try again later.';  // Fallback message
     }
 };
 
-// Function for AyaForUser (you can modify this logic as needed)
+// Example usage
 export const AyaForUser = (userInput) => {
-    // Example function that uses sendMessageToChatbot
-    // You can customize this function to handle specific logic related to "AyaForUser"
-    
-    // This can be the function that will be called when you want to interact with the chatbot
     sendMessageToChatbot(userInput)
         .then((response) => {
-            console.log("AyaForUser response: ", response); // Log or handle the chatbot's response
+            console.log("AyaForUser response: ", response); // Handle the chatbot's response
             // Additional logic based on the response can be added here
         })
         .catch((error) => {
