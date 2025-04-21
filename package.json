@@ -17,6 +17,7 @@
     "axios": "^1.8.3",
     "bootstrap": "^5.3.3",
     "cors": "^2.8.5",
+    "dompurify": "^3.2.5",
     "dotenv": "^16.4.7",
     "firebase": "^10.13.1",
     "firebase-admin": "^12.4.0",

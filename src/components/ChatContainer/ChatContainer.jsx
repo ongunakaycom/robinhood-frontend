@@ -28,7 +28,7 @@ const ChatContainer = ({
 
   useEffect(() => {
     if (!userMessagesRef) return;
-    const messagesQuery = query(userMessagesRef, orderByChild('timestamp'), limitToLast(50));
+    const messagesQuery = query(userMessagesRef, orderByChild('timestamp'), limitToLast(5));
     const unsubscribe = onValue(messagesQuery, (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -52,13 +52,13 @@ const ChatContainer = ({
   const fetchBotResponse = async (inputText) => {
     setIsSending(true);
 
-    // Use DeepSeek API to get a response
+    // Bot response
     try {
       const botResponse = await sendMessageToChatbot(inputText);
       setIsSending(false); // Reset sending state
       return botResponse;
     } catch (error) {
-      console.error("Error with DeepSeek API:", error);
+      console.error("Error with API:", error);
       setIsSending(false); // Reset sending state
       return 'Sorry, something went wrong. Please try again later.'; // Fallback message
     }
