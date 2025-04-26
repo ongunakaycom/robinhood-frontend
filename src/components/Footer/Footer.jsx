@@ -1,6 +1,25 @@
 import React from 'react';
 import './Footer.css';
-import { FaTwitter, FaInstagram, FaTelegram } from 'react-icons/fa'; // Import icons
+import { FaInstagram, FaTelegram } from 'react-icons/fa'; // Import other icons
+
+const XLogo = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ margin: '0 10px', color: '#fff' }}
+    className="x-logo"  // Add a class here for specific styling
+  >
+    <path d="M4 4l16 16M4 20L20 4" />
+  </svg>
+);
+
 
 const Footer = () => {
   return (
@@ -13,7 +32,7 @@ const Footer = () => {
           rel="noopener noreferrer"
           className="social-link"
         >
-          <FaTwitter size={24} style={{ margin: '0 10px', color: '#1DA1F2' }} />
+          <XLogo /> {/* Replace the old Twitter icon with X logo */}
         </a>
         <a
           href="https://www.instagram.com/robinhoodtradebot/"

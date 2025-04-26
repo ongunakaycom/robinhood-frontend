@@ -1,22 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container, Row, Col, Button, Alert } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';  
 import './CookieDisclaimer.css';
 
 function CookieDisclaimer() {
   const { t } = useTranslation();  // Initialize translation hook
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);  // Default to showing the disclaimer
 
-  // Show cookie disclaimer if not accepted
-  useEffect(() => {
-    const cookieAccepted = localStorage.getItem('cookieAccepted');
-    if (!cookieAccepted) {
-      setShow(true);
-    }
-  }, []);
-
+  // Handle the "accept" button click to just hide the disclaimer
   const handleAccept = () => {
-    localStorage.setItem('cookieAccepted', 'true');
     setShow(false); // Hide the cookie disclaimer after accepting
   };
 
