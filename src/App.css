@@ -4,10 +4,35 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  scrollbar-width: thin; /* Sets the scrollbar width to thin */
-  scrollbar-color: #ffffff #38459a; /* Thumb color followed by track color */
-  -webkit-overflow-scrolling: touch; /* Ensures smooth scrolling on touch devices */
   scroll-behavior: smooth; /* Smooth scrolling for modern browsers */
+}
+
+/* WebKit scrollbar styling (Works in Chrome, Safari, Edge, Opera, Samsung Internet) */
+::-webkit-scrollbar {
+  width: 8px;   /* Vertical scrollbar */
+  height: 8px;  /* Horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #38459a;  /* Track color */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffffff;  /* Thumb color */
+  border-radius: 4px;
+  border: 1px solid #38459a; /* Creates contrast (optional) */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f0f0f0;  /* Hover state */
+}
+
+/* Firefox fallback - will use default styling if not supported */
+@supports (scrollbar-width: thin) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #ffffff #38459a;
+  }
 }
 
 /* Custom Scrollbar styling for Webkit browsers (Chrome, Opera, Safari) */
