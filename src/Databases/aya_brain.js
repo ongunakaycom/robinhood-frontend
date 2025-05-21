@@ -1,10 +1,11 @@
-// Directly using the correct URL
-const API_URL = "https://deep-seek-chat-bot-python.onrender.com";  // Direct URL
+// ✅ Define separate constants for each endpoint
+const CHATBOT_URL = "https://deep-seek-chat-bot-python.onrender.com/ask"; // For chatbot POST
+const MERGED_DATA_URL = "https://deep-seek-chat-bot-python.onrender.com/api/merged-data"; // For merged trading data GET
 
-// Function to send a message to the chatbot 
+// ✅ Send a message to the chatbot (POST /ask)
 export const sendMessageToChatbot = async (message) => {
     try {
-        const response = await fetch(`${API_URL}/ask`, {
+        const response = await fetch(CHATBOT_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -14,25 +15,45 @@ export const sendMessageToChatbot = async (message) => {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to send message to API');
+            throw new Error('Failed to send message to the chatbot API');
         }
 
         const data = await response.json();
         return data.response;
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Chatbot Error:', error);
         return 'Sorry, something went wrong. Please try again later.';
     }
 };
 
-// Example usage
+// ✅ Get merged trading data (GET /api/merged-data)
+export const getMergedData = async () => {
+    try {
+        const response = await fetch(MERGED_DATA_URL, {
+            method: 'GET',
+            mode: 'cors'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch merged data');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Merged Data Error:', error);
+        return null;
+    }
+};
+
+// ✅ Example usage function
 export const AyaForUser = (userInput) => {
     sendMessageToChatbot(userInput)
         .then((response) => {
-            console.log("AyaForUser response: ", response); // Handle the chatbot's response
-            // Additional logic based on the response can be added here
+            console.log("💬 AyaForUser response: ", response);
+            // Add UI update or response handling logic here
         })
         .catch((error) => {
-            console.error("Error with AyaForUser:", error);
+            console.error("❌ AyaForUser Error:", error);
         });
 };
