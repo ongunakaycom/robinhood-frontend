@@ -3,7 +3,6 @@ const API_BASE = "https://deep-seek-chat-bot-python.onrender.com";
 
 // ✅ Endpoints
 const ASK_ENDPOINT = `${API_BASE}/ask`;
-const MERGED_DATA_ENDPOINT = `${API_BASE}/api/merged-data`;
 
 // ✅ Send user message to Flask chatbot, optionally with signal data
 export const sendMessageToChatbot = async (message, signalData = null) => {
@@ -29,25 +28,6 @@ export const sendMessageToChatbot = async (message, signalData = null) => {
     } catch (error) {
         console.error('💥 Chatbot Error:', error);
         return '❌ Something went wrong. Please try again later.';
-    }
-};
-
-// ✅ Fetch merged data from backend
-export const getMergedData = async () => {
-    try {
-        const response = await fetch(MERGED_DATA_ENDPOINT, {
-            method: 'GET',
-            mode: 'cors'
-        });
-
-        if (!response.ok) {
-            throw new Error('❌ Failed to fetch merged data');
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('💥 Merged Data Error:', error);
-        return null;
     }
 };
 
