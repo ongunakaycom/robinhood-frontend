@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Dropdown, Badge } from 'react-bootstrap';
 import { AiOutlineBell } from 'react-icons/ai';
+import { ref, onValue } from 'firebase/database';
+import { database } from '../../../firebase.js'; // Correct import
 import './HeaderAlert.css';
 
-/** === Helper Functions === **/
+// === Helper Functions ===
 const checkTradeProgress = (tradeState, currentPrice, createAlert, resetTradeState) => {
   const { active, signalType, entryPrice, takeProfit, stopLoss } = tradeState;
   if (!active || entryPrice === null) return;
@@ -14,7 +16,7 @@ const checkTradeProgress = (tradeState, currentPrice, createAlert, resetTradeSta
   if (signalType === 'BUY' && (isProfit || isLoss)) {
     const type = isProfit ? 'success' : 'danger';
     const outcome = isProfit ? '🎯 Take Profit Reached' : '🚨 Stop Loss Triggered';
-    const value = isProfit ? (currentPrice - entryPrice) : (entryPrice - currentPrice);
+    const value = Math.abs(currentPrice - entryPrice);
 
     createAlert(type, outcome, currentPrice, [
       `${signalType} Trade Closed`,
@@ -27,7 +29,7 @@ const checkTradeProgress = (tradeState, currentPrice, createAlert, resetTradeSta
   }
 };
 
-const createTradeSignal = (signalType, price, marketData, setTradeState, createAlert) => {
+const createTradeSignal = (signalType, price, indicators, setTradeState, createAlert) => {
   const OFFSET = 1109;
   const takeProfit = signalType === 'BUY' ? price + OFFSET : null;
   const stopLoss = signalType === 'BUY' ? price - OFFSET : null;
@@ -40,14 +42,15 @@ const createTradeSignal = (signalType, price, marketData, setTradeState, createA
     price,
     [
       `Entry Price: $${price.toFixed(2)}`,
-      `Take Profit: $${takeProfit.toFixed(2)}`,
-      `Stop Loss: $${stopLoss.toFixed(2)}`,
-      `RSI: ${marketData.rsi?.toFixed(2) || 'N/A'}`,
-      `MACD: ${marketData.macd_value?.toFixed(2) || 'N/A'}`
+      `Take Profit: $${takeProfit?.toFixed(2) || 'N/A'}`,
+      `Stop Loss: $${stopLoss?.toFixed(2) || 'N/A'}`,
+      `RSI: ${indicators.rsi?.toFixed(2) || 'N/A'}`,
+      `MACD: ${indicators.macd_value?.toFixed(2) || 'N/A'}`
     ]
   );
 };
 
+// === Component ===
 const HeaderAlert = ({ tradeState, setTradeState }) => {
   const [alerts, setAlerts] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -96,7 +99,7 @@ const HeaderAlert = ({ tradeState, setTradeState }) => {
 
   const calculateIndicators = (data) => {
     if (!data || data.length < 3) return null;
-    const [prediction, indicators, market] = data;
+    const [market, prediction, indicators] = data;
     return {
       ...indicators,
       macdValue: prediction.macd_value,
@@ -119,7 +122,7 @@ const HeaderAlert = ({ tradeState, setTradeState }) => {
     if (!data || data.length < 3) return;
 
     const indicators = calculateIndicators(data);
-    const marketData = data[2];
+    const marketData = data[0];
     const orderBook = analyzeOrderBook(marketData);
 
     if (!indicators || !orderBook) return;
@@ -131,7 +134,7 @@ const HeaderAlert = ({ tradeState, setTradeState }) => {
 
     const rsiBearish = indicators.rsi < 42;
     const macdBearish = indicators.macdDiff < -0.05;
-    const highVolatility = indicators.atr > (1.05 * indicators.prev_atr || 0);
+    const highVolatility = indicators.atr > (1.05 * (indicators.prev_atr || 0));
     const obvBearish = indicators.obv < indicators.prev_obv;
     const isOversold = rsiBearish && macdBearish && (highVolatility || obvBearish);
     const isBullishEngulfing = indicators.candlestick_pattern?.includes('bullish engulfing');
@@ -144,20 +147,28 @@ const HeaderAlert = ({ tradeState, setTradeState }) => {
   }, [tradeState, createAlert, resetTradeState, setTradeState]);
 
   useEffect(() => {
-    const fetchMarketData = async () => {
-      try {
-        const fileId = '1hMopdTMeeNDlVEqhqmA5fc7CVcS_QNH6';
-        const res = await fetch(`https://drive.google.com/uc?export=download&id=${fileId}`);
-        const data = await res.json();
-        checkForTradingSignals(data);
-      } catch (err) {
-        console.error('Market fetch error:', err);
-      }
-    };
+    const mergedRef = ref(database, 'trading/mergedData');
+    const TRIGGER_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+    let lastTriggerTime = 0;
 
-    fetchMarketData();
-    const interval = setInterval(fetchMarketData, 5 * 60 * 1000);
-    return () => clearInterval(interval);
+    const unsubscribe = onValue(mergedRef, (snapshot) => {
+      const mergedData = snapshot.val();
+      if (!mergedData) return;
+
+      const now = Date.now();
+      if (
+        now - lastTriggerTime >= TRIGGER_INTERVAL_MS &&
+        mergedData.prediction_value &&
+        mergedData.macd_value
+      ) {
+        checkForTradingSignals([mergedData, mergedData, mergedData]);
+        lastTriggerTime = now;
+      }
+    }, (error) => {
+      console.error('Firebase listener error:', error);
+    });
+
+    return () => unsubscribe();
   }, [checkForTradingSignals]);
 
   return (
@@ -199,7 +210,9 @@ const HeaderAlert = ({ tradeState, setTradeState }) => {
                   <small className="text-muted">{new Date(alert.timestamp).toLocaleTimeString()}</small>
                 </div>
                 <div className="mt-1">
-                  {alert.details.map((d, i) => <div key={i} className="small">{d}</div>)}
+                  {alert.details.map((d, i) => (
+                    <div key={i} className="small">{d}</div>
+                  ))}
                 </div>
               </div>
             ))
