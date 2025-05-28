@@ -98,15 +98,14 @@ const HeaderAlert = ({ tradeState, setTradeState }) => {
   }, [setTradeState]);
 
   const calculateIndicators = (data) => {
-    if (!data || data.length < 3) return null;
-    const [market, prediction, indicators] = data;
+    if (!data) return null;
     return {
-      ...indicators,
-      macdValue: prediction.macd_value,
-      macdDiff: indicators.macd - indicators.macd_signal,
-      price: market.price,
-      ema21: prediction.ema21,
-      macdCrossover: prediction.macd_crossover
+      ...data.indicators,
+      macdValue: data.macd_value,
+      macdDiff: data.indicators.macd - data.indicators.macd_signal,
+      price: data.price,
+      ema21: data.ema21,
+      macdCrossover: data.macd_crossover,
     };
   };
 
@@ -119,11 +118,8 @@ const HeaderAlert = ({ tradeState, setTradeState }) => {
   };
 
   const checkForTradingSignals = useCallback((data) => {
-    if (!data || data.length < 3) return;
-
     const indicators = calculateIndicators(data);
-    const marketData = data[0];
-    const orderBook = analyzeOrderBook(marketData);
+    const orderBook = analyzeOrderBook(data);
 
     if (!indicators || !orderBook) return;
 
@@ -148,22 +144,12 @@ const HeaderAlert = ({ tradeState, setTradeState }) => {
 
   useEffect(() => {
     const mergedRef = ref(database, 'trading/mergedData');
-    const TRIGGER_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-    let lastTriggerTime = 0;
 
     const unsubscribe = onValue(mergedRef, (snapshot) => {
       const mergedData = snapshot.val();
-      if (!mergedData) return;
+      if (!mergedData || !mergedData.prediction_value || !mergedData.macd_value) return;
 
-      const now = Date.now();
-      if (
-        now - lastTriggerTime >= TRIGGER_INTERVAL_MS &&
-        mergedData.prediction_value &&
-        mergedData.macd_value
-      ) {
-        checkForTradingSignals([mergedData, mergedData, mergedData]);
-        lastTriggerTime = now;
-      }
+      checkForTradingSignals(mergedData);
     }, (error) => {
       console.error('Firebase listener error:', error);
     });
