@@ -2,9 +2,9 @@
 import { create } from 'zustand';
 
 const useTradeStore = create((set) => ({
-  tradeState: {
+    tradeState: {
     active: false,
-    signalType: null,
+    signalType: 'neutral', // was null
     entryPrice: null,
     takeProfit: null,
     stopLoss: null,
@@ -14,7 +14,7 @@ const useTradeStore = create((set) => ({
     set({
       tradeState: {
         active: false,
-        signalType: null,
+        signalType: 'neutral',
         entryPrice: null,
         takeProfit: null,
         stopLoss: null,

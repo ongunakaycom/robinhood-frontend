@@ -16,6 +16,7 @@
   "alerts": {
     "title": "Alerts",
     "noAlerts": "No alerts currently",
-    "clearAll": "Clear All"
+    "clearAll": "Clear All",
+    "marketCondition": "Market condition"
   }  
 }
