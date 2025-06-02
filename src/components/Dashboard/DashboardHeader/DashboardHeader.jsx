@@ -4,7 +4,6 @@ import { BsChatLeft } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 import { useEffect } from 'react';
-import HeaderAlert from './HeaderAlert';
 import './DashboardHeader.css';
 
 const DashboardHeader = () => {
@@ -35,9 +34,6 @@ const DashboardHeader = () => {
       </div>
 
       <div className="d-flex align-items-center">
-       <HeaderAlert />
-
-
         <Dropdown>
           <Dropdown.Toggle variant="transparent" className="dashboard-header-button">
             <AiOutlineUser size={30} />

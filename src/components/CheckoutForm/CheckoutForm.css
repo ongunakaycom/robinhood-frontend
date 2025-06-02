@@ -1,9 +1,0 @@
-@media (max-width: 480px) {
-    .checkout-form {
-        font-size: 0.8rem !important;
-        border-radius: 10px;
-    }
-    .premium-card {
-        border: none;
-    }
-}

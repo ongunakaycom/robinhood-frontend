@@ -10,8 +10,6 @@ const SignupWithEmail = React.lazy(() => import('./components/WelcomePage/Signup
 const Signin = React.lazy(() => import('./components/WelcomePage/Signin/Signin'));
 const PasswordRetrieve = React.lazy(() => import('./components/WelcomePage/Signin/PasswordRetrieve/PasswordRetrieve'));
 const AccountSettings = React.lazy(() => import('./components/Dashboard/Account-Settings/Account-Settings'));
-const AboutPage = React.lazy(() => import('./components/WelcomePage/AboutPage/AboutPage.jsx'));
-const GoPremium = React.lazy(() => import('./components/CheckoutForm/CheckoutForm.jsx'));
 const VerificationPage = React.lazy(() => import('./components/WelcomePage/Signup/VerificationPage/VerificationPage.jsx'));
 const ProtectedRoute = React.lazy(() => import('./components/WelcomePage/ProtectedRoute/ProtectedRoute.jsx'));
 
@@ -28,9 +26,7 @@ function App() {
             <Route path="/signin" element={<Signin />} />
             <Route path="/password-retrieve" element={<PasswordRetrieve />} />
             <Route path="/account-settings" element={<AccountSettings />} />
-            <Route path="/go-premium" element={<GoPremium />} />
             <Route path="/verification" element={<VerificationPage />} />
-            <Route path="/about" element={<AboutPage />} />
           </Routes>
         </Suspense>
       </div>
