@@ -3,17 +3,30 @@ import { AiOutlineUser, AiOutlineLogout, AiOutlineSetting } from 'react-icons/ai
 import { BsChatLeft } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import './DashboardHeader.css';
 
 const DashboardHeader = () => {
   const navigate = useNavigate();
   const auth = getAuth();
+  const [isProUser, setIsProUser] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) navigate('/');
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        navigate('/');
+      } else {
+        const firestore = getFirestore();
+        const userDoc = doc(firestore, 'users', user.uid);
+        const userSnapshot = await getDoc(userDoc);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          setIsProUser(userData.accountStatus === 'Pro');
+        }
+      }
     });
+
     return () => unsubscribe();
   }, [auth, navigate]);
 
@@ -39,9 +52,11 @@ const DashboardHeader = () => {
             <AiOutlineUser size={30} />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => navigate('/dashboard')}>
-              <BsChatLeft /> Chat with Robin Hood
-            </Dropdown.Item>
+            {isProUser && (
+              <Dropdown.Item onClick={() => navigate('/dashboard')}>
+                <BsChatLeft /> Chat with Robin Hood
+              </Dropdown.Item>
+            )}
             <Dropdown.Item onClick={() => navigate('/account-settings')}>
               <AiOutlineSetting /> Account Settings
             </Dropdown.Item>

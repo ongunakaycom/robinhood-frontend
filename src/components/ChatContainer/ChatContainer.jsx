@@ -1,9 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'; 
+// ChatContainer.jsx
+import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import MessageList from './MessageList/MessageList.jsx';
 import ChatInput from './ChatInput/ChatInput.jsx';
 import { onValue, push, query, limitToLast, orderByChild } from 'firebase/database';
-import { sendMessageToChatbot } from '../../Databases/aya_brain'; // Import the function to communicate with DeepSeek API
-import './ChatContainer.css'; 
+import { sendMessageToChatbot } from '../../Databases/aya_brain';
+import './ChatContainer.css';
 
 const ChatContainer = ({
   userMessagesRef,
@@ -41,26 +42,20 @@ const ChatContainer = ({
 
   useLayoutEffect(() => {
     if (messages.length > 0) {
-      scrollToBottom();
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   const fetchBotResponse = async (inputText) => {
     setIsSending(true);
-
-    // Bot response
     try {
       const botResponse = await sendMessageToChatbot(inputText);
-      setIsSending(false); // Reset sending state
+      setIsSending(false);
       return botResponse;
     } catch (error) {
       console.error("Error with API:", error);
-      setIsSending(false); // Reset sending state
-      return 'Sorry, something went wrong. Please try again later.'; // Fallback message
+      setIsSending(false);
+      return 'Sorry, something went wrong. Please try again later.';
     }
   };
 
@@ -70,7 +65,6 @@ const ChatContainer = ({
       console.error("No Input on Submit");
       return;
     }
-
     try {
       await addMessage('user', inputText);
       setInputText('');
@@ -83,7 +77,7 @@ const ChatContainer = ({
   };
 
   return (
-    <div className="aya-container">
+    <>
       <MessageList
         messages={messages}
         messagesEndRef={messagesEndRef}
@@ -96,7 +90,7 @@ const ChatContainer = ({
         onSubmit={handleSubmitMessage}
         isSending={isSending}
       />
-    </div>
+    </>
   );
 };
 

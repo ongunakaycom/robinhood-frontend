@@ -7,6 +7,7 @@ import WelcomePageHeader from "../WelcomePageHeader/WelcomePageHeader";
 import { useNavigate } from "react-router-dom";
 import Alert from "../../Alert/Alert"; 
 import HCaptcha from "@hcaptcha/react-hcaptcha"; // Import the hCaptcha component
+import Footer from "../../Footer/Footer"; // ✅ Import Footer
 
 const SignInComponent = () => {
   const [email, setEmail] = useState("");
@@ -90,9 +91,7 @@ const SignInComponent = () => {
       <main className="form-page-content">
         <div className="form-page-container">
           <h2>Sign in to your account</h2>
-
           <a href="/Signup">Don't have an account? Sign up here!</a>
-
           <div className="form-page-form">
             {message && <Alert type={messageType} message={message} />}
             <form onSubmit={handleSignIn}>
@@ -120,15 +119,14 @@ const SignInComponent = () => {
               </label>
 
               <div className="recaptcha-container">
-                {/* Replace ReCAPTCHA with hCaptcha */}
                 <HCaptcha
-                  sitekey={process.env.REACT_APP_HCAPTCHA_SITE_KEY}  // This should be correct
-                  onVerify={handleCaptchaChange}  // Handles the token after successful verification
+                  sitekey={process.env.REACT_APP_HCAPTCHA_SITE_KEY}
+                  onVerify={handleCaptchaChange}
                 />
               </div>
 
               <a href="/password-retrieve">Forgot password? | Can't log in?</a>
-              <br></br>
+              <br />
               <button type="submit" className="submit-button">
                 Sign In
               </button>
@@ -140,6 +138,8 @@ const SignInComponent = () => {
           </a>
         </div>
       </main>
+
+      <Footer /> {/* ✅ Add Footer here */}
     </div>
   );
 };
