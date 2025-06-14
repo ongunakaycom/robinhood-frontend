@@ -18,15 +18,37 @@ export const sendMessageToChatbot = async (message, market = 'coinbase', coin = 
       body: JSON.stringify({ request: message }),
     });
 
+    const text = await response.text(); // get raw text first
+
     if (!response.ok) {
+      console.error('Backend error:', response.status, text);
       throw new Error(`Backend responded with status ${response.status}`);
     }
 
-    const data = await response.json();
-    return data.data?.analysis?.raw_response || "⚠️ No analysis response from server.";
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (jsonErr) {
+      console.error('JSON parse error:', jsonErr, 'Response text:', text);
+      throw new Error('Failed to parse backend JSON');
+    }
+
+    // Check for error fields anywhere expected
+    if (data.error) {
+      return data.error;
+    }
+    if (data.data?.analysis?.error) {
+      return data.data.analysis.error;
+    }
+
+    if (data.data?.analysis?.raw_response) {
+      return data.data.analysis.raw_response;
+    }
+
+    return "⚠️ No analysis response from server.";
   } catch (error) {
-    console.error('sendMessageToChatbot error:', error);
-    return 'Sorry, something went wrong. Please try again later.';
+    console.error('sendMessageToChatbot catch error:', error);
+    return `Sorry, something went wrong. Please try again later.\nDetails: ${error.message}`;
   }
 };
 
