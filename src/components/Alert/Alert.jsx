@@ -9,7 +9,7 @@ const Alert = ({ type = 'info', message, details = [], timestamp, onClick, read 
       className={`alert alert-${type} p-2 mb-2 cursor-pointer ${read ? 'alert-read' : ''}`}
       onClick={onClick}
     >
-      <div className="d-flex justify-content-between align-items-center">
+      <div className="d-flex align-items-center" style={{ justifyContent: 'space-evenly' }}>
         <strong>{message}</strong>
         {timestamp && (
           <small className="text-muted">{new Date(timestamp).toLocaleTimeString()}</small>

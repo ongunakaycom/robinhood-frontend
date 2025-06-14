@@ -34,9 +34,8 @@ node_modules
 
 # Firebase
 .firebase/
-.firebase/
+hosting.YnVpbGQ.cache
 *.cache
-.firebase/hosting.YnVpbGQ.cache
 .firebase/hosting.*.cache
 firebase-debug.log
 firebase-debug.*.log
@@ -44,3 +43,5 @@ firebase-debug.*.log
 firebase-debug.log*
 ui-debug.log*
 robinhoodapp-65342-firebase-adminsdk-fbsvc-dd2b2d82fb.json
+project-tree.txt
+.firebase/hosting.YnVpbGQ.cache

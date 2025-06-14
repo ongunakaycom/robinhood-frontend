@@ -1,40 +1,33 @@
-// ChatContainer.jsx
 import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import MessageList from './MessageList/MessageList.jsx';
 import ChatInput from './ChatInput/ChatInput.jsx';
 import { onValue, push, query, limitToLast, orderByChild } from 'firebase/database';
-import { sendMessageToChatbot } from '../../Databases/aya_brain';
+import { sendMessageToChatbot } from '../../Databases/brain';
+import useTradeStore from '../../store/tradeStore';
 import './ChatContainer.css';
 
-const ChatContainer = ({
-  userMessagesRef,
-  displayName,
-  userAvatar,
-  error,
-  setError,
-}) => {
+const ChatContainer = ({ userMessagesRef, displayName, userAvatar, error, setError }) => {
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([]);
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef(null);
 
+  const { preferredMarket = 'coinbase', preferredCoin = 'btcusd' } = useTradeStore();
+
   const addMessage = useCallback(async (sender, text) => {
-    const Message = {
-      text: text,
-      timestamp: Date.now(),
-      sender: sender,
-    };
-    await push(userMessagesRef, Message);
+    if (!userMessagesRef) return;
+    const message = { text, timestamp: Date.now(), sender };
+    await push(userMessagesRef, message);
   }, [userMessagesRef]);
 
   useEffect(() => {
     if (!userMessagesRef) return;
     const messagesQuery = query(userMessagesRef, orderByChild('timestamp'), limitToLast(5));
-    const unsubscribe = onValue(messagesQuery, (snapshot) => {
+    const unsubscribe = onValue(messagesQuery, snapshot => {
       const data = snapshot.val();
       if (data) {
-        const messageList = Object.entries(data).map(([id, message]) => ({ id, ...message }));
-        setMessages(messageList);
+        const msgs = Object.entries(data).map(([id, msg]) => ({ id, ...msg }));
+        setMessages(msgs);
       }
     });
     return () => unsubscribe();
@@ -46,33 +39,21 @@ const ChatContainer = ({
     }
   }, [messages]);
 
-  const fetchBotResponse = async (inputText) => {
-    setIsSending(true);
-    try {
-      const botResponse = await sendMessageToChatbot(inputText);
-      setIsSending(false);
-      return botResponse;
-    } catch (error) {
-      console.error("Error with API:", error);
-      setIsSending(false);
-      return 'Sorry, something went wrong. Please try again later.';
-    }
-  };
-
   const handleSubmitMessage = async (event) => {
     event.preventDefault();
-    if (!inputText.trim()) {
-      console.error("No Input on Submit");
-      return;
-    }
+    if (!inputText.trim()) return;
+
+    setIsSending(true);
     try {
       await addMessage('user', inputText);
-      setInputText('');
-      const responseText = await fetchBotResponse(inputText);
+      const responseText = await sendMessageToChatbot(inputText, preferredMarket, preferredCoin);
       await addMessage('bot', responseText);
-    } catch (error) {
-      console.error('Error with handling submit message:', error);
-      setError('Error with handling submit message');
+      setInputText('');
+    } catch (err) {
+      console.error('Submit error:', err);
+      setError('Something went wrong when sending your message.');
+    } finally {
+      setIsSending(false);
     }
   };
 

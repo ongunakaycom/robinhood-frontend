@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Form } from 'react-bootstrap';
 import DashboardHeader from '../DashboardHeader/DashboardHeader';
 import { getAuth, updatePassword, deleteUser, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
@@ -8,6 +8,8 @@ import './AccountSettings.css';
 import Footer from '../../Footer/Footer';
 import Alert from '../../Alert/Alert'; 
 import useAccountStore from '../../../store/accountStore';  // Zustand store
+import useTradeStore from '../../../store/tradeStore';
+
 
 const AccountSettings = () => {
   const [username, setUsername] = useState('');
@@ -18,140 +20,154 @@ const AccountSettings = () => {
   const [changedUserName, setChangedUserName] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  
-  const { accountStatus, setAccountStatus } = useAccountStore();  // Get Zustand store data
+
+  const { accountStatus, setAccountStatus } = useAccountStore();
+  const { preferredMarket, preferredCoin, setPreferredMarket, setPreferredCoin } = useTradeStore();
 
   const auth = getAuth();
   const navigate = useNavigate();
   const firestore = getFirestore();
 
-  // Fetch and update user data from Firestore when logged in
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setEmail(user.email);
+      if (!user) return;
 
-        const userRef = doc(firestore, "users", user.uid);
-        const userSnapshot = await getDoc(userRef);
+      setEmail(user.email || '');
 
-        if (!userSnapshot.exists()) {
-          // Create user document with default data
-          await setDoc(userRef, {
-            displayName: user.displayName || "User",
-            email: user.email,
-            photoURL: user.photoURL || '',
-            createdAt: new Date(),
-            accountStatus: 'Regular',  // Default account status
-          });
-          setAccountStatus('Regular'); // Update Zustand store with default status
-        } else {
-          const userData = userSnapshot.data();
-          setUsername(userData.displayName);
-          setProfilePicture(userData.photoURL);
-          setAccountStatus(userData.accountStatus || 'Regular'); // Update Zustand store with user status
-        }
+      const userRef = doc(firestore, "users", user.uid);
+      const userSnapshot = await getDoc(userRef);
+
+      if (!userSnapshot.exists()) {
+        const defaultUserData = {
+          displayName: user.displayName || "User",
+          email: user.email,
+          photoURL: user.photoURL || '',
+          createdAt: new Date(),
+          accountStatus: 'Regular',
+          preferredMarket: '',
+          preferredCoin: '',
+        };
+
+        await setDoc(userRef, defaultUserData);
+        setAccountStatus(defaultUserData.accountStatus);
+        setUsername(defaultUserData.displayName);
+        setProfilePicture(defaultUserData.photoURL || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png');
+        setPreferredMarket(defaultUserData.preferredMarket);
+        setPreferredCoin(defaultUserData.preferredCoin);
+      } else {
+        const data = userSnapshot.data();
+        setUsername(data.displayName || '');
+        setProfilePicture(data.photoURL || 'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png');
+        setAccountStatus(data.accountStatus || 'Regular');
+        setPreferredMarket(data.preferredMarket || '');
+        setPreferredCoin(data.preferredCoin || '');
       }
     });
 
     return () => unsubscribe();
-  }, [auth, firestore, setAccountStatus]);
+  }, [auth, firestore, setAccountStatus, setPreferredMarket, setPreferredCoin]);
 
-  // Handle Profile Picture Change
   const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setProfilePicture(URL.createObjectURL(file));
-      setChangedPic(file);
-    }
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setProfilePicture(URL.createObjectURL(file));
+    setChangedPic(file);
   };
 
-    // Function to mask the email
-    const maskEmail = (email) => {
-      if (!email) return '***********@****.com'; // Default fallback
-      const [username, domain] = email.split('@');
-      const maskedUsername = username.slice(0, 3) + '*****'; // Show only the first 3 characters of the email before the '@'
-      return `${maskedUsername}@${domain}`;
-    };
+  const maskEmail = (email) => {
+    if (!email) return '***********@****.com';
+    const [userPart, domain] = email.split('@');
+    const maskedUser = userPart.length > 3 ? userPart.slice(0, 3) + '*****' : '*****';
+    return `${maskedUser}@${domain}`;
+  };
 
-  // Handle Profile Picture Update
   const handleUpdateProfilePicture = async () => {
-    if (changedPic) {
-      try {
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64String = reader.result;
-          const userRef = doc(firestore, "users", auth.currentUser.uid);
+    if (!changedPic) return;
 
-          // Update the photoURL in Firestore
-          await updateDoc(userRef, { photoURL: base64String, updatedAt: new Date() });
-          setSuccess("Profile picture updated successfully.");
-          setChangedPic(null);
-        };
+    try {
+      const base64String = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
         reader.readAsDataURL(changedPic);
-      } catch (err) {
-        console.error("Error updating profile picture:", err);
-        setError(`Failed to update profile picture: ${err.message}`);
-      }
+      });
+
+      const userRef = doc(firestore, "users", auth.currentUser.uid);
+      await updateDoc(userRef, { photoURL: base64String, updatedAt: new Date() });
+      setSuccess("Profile picture updated successfully.");
+      setChangedPic(null);
+    } catch (err) {
+      console.error(err);
+      setError(`Failed to update profile picture: ${err.message}`);
     }
   };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
-  
+    setError('');
+    setSuccess('');
+
     try {
       let changesMade = false;
-  
-      // Update profile picture if changed
+      const userRef = doc(firestore, "users", auth.currentUser.uid);
+
       if (changedPic) {
         await handleUpdateProfilePicture();
         changesMade = true;
       }
-  
-      // Update username
-      if (changedUserName) {
-        const userRef = doc(firestore, "users", auth.currentUser.uid);
+
+      if (changedUserName && changedUserName !== username) {
         await updateDoc(userRef, { displayName: changedUserName, updatedAt: new Date() });
+        setUsername(changedUserName);
         changesMade = true;
       }
-  
-      // Update password
+
+      // Update preferredMarket and preferredCoin if changed
+      const updates = {};
+      if (preferredMarket !== undefined) updates.preferredMarket = preferredMarket;
+      if (preferredCoin !== undefined) updates.preferredCoin = preferredCoin;
+
+      if (Object.keys(updates).length > 0) {
+        await updateDoc(userRef, { ...updates, updatedAt: new Date() });
+        changesMade = true;
+      }
+
       if (password) {
         await updatePassword(auth.currentUser, password);
         changesMade = true;
       }
-  
+
       if (changesMade) {
-        setSuccess('Profile updated successfully.');
+        setSuccess('Account settings saved');
       } else {
         setError('No changes made.');
       }
-  
+
       setChangedUserName(null);
       setChangedPic(null);
       setPassword('');
-  
+
     } catch (err) {
       setError(err.message);
     }
   };
-  
-  // Handle Account Deletion
+
   const handleDeleteAccount = async () => {
-    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          await deleteUser(user);
-          setError(null);
-          navigate('/');
-        } else {
-          setError('No user is currently signed in.');
-        }
-      } catch (err) {
-        setError(err.message);
+    const confirmDelete = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
+    if (!confirmDelete) return;
+
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        setError('No user is currently signed in.');
+        return;
       }
+      await deleteUser(user);
+      setError('');
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -164,8 +180,7 @@ const AccountSettings = () => {
           <div className="form-page-form">
             <form onSubmit={handleUpdateProfile}>
               <Row>
-                <Col sm={4}>
-                  {/* Profile Picture Upload */}
+                <Col sm={12}>
                   <div className="profile-picture-container">
                     <input
                       type="file"
@@ -186,84 +201,85 @@ const AccountSettings = () => {
                     </label>
                   </div>
                 </Col>
-                <Col sm={8}>
-                  {/* Username Field */}
-                  <div className="form-group mb-3">
-                    <label className="text-start w-100">
-                      Username:
-                      <input
-                        type="text"
-                        placeholder="Enter your username"
-                        value={username}
-                        onChange={(e) => { setUsername(e.target.value); setChangedUserName(e.target.value); }}
-                        className="w-100"
-                      />
-                    </label>
-                  </div>
+                <Col sm={12}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Username:</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter your username"
+                      value={changedUserName !== null ? changedUserName : username}
+                      onChange={(e) => setChangedUserName(e.target.value)}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mt-3">
+                    <Form.Label>Preferred Market:</Form.Label>
+                    <Form.Select
+                      value={preferredMarket}
+                      onChange={(e) => setPreferredMarket(e.target.value)}
+                    >
+                      <option value="">Select a market</option>
+                      <option value="Coinbase">Coinbase</option>
+                    </Form.Select>
+                  </Form.Group>
+
+                  <Form.Group className="mt-3">
+                    <Form.Label>Preferred Coin:</Form.Label>
+                    <Form.Select
+                      value={preferredCoin}
+                      onChange={(e) => setPreferredCoin(e.target.value)}
+                    >
+                      <option value="">Select a coin</option>
+                      <option value="BTC">BTC</option>
+                      <option value="ETH">ETH</option>
+                    </Form.Select>
+                  </Form.Group>
                 </Col>
               </Row>
 
-              {/* Full Width Section (Upgrade, Email, Account Status, Change Password) */}
               <div className="full-width-section mt-4">
                 <div className="info-fields w-100">
-                  {/* Styled Email Display */}
-                  <div className="form-group mt-3">
-                    <label className="text-start w-100">
-                      Email:
-                      <input
-                        type="text"  // Use text input because it's readonly
-                        value={maskEmail(email)}  // Masked email
-                        readOnly
-                        className="w-100"  // Make sure it's full-width
-                      />
-                    </label>
-                  </div>
-
-                  <div className="form-group mt-3">
-                    <label className="text-start w-100">Account Status:</label>
-                    <input 
-                      type="text" 
-                      readOnly 
-                      className="w-100" 
-                      value={accountStatus} 
-                      style={{ backgroundColor: '#f9f9f9', border: '1px solid #ddd', padding: '10px', borderRadius: '5px' }} 
+                  <Form.Group className="mt-3">
+                    <Form.Label>Email:</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={maskEmail(email)}
+                      readOnly
                     />
-                  </div>
+                  </Form.Group>
 
+                  <Form.Group className="mt-3">
+                    <Form.Label>Account Status:</Form.Label>
+                    <Form.Control
+                      type="text"
+                      readOnly
+                      value={accountStatus}
+                      style={{ backgroundColor: '#f9f9f9', border: '1px solid #ddd', padding: '10px', borderRadius: '5px' }}
+                    />
+                  </Form.Group>
 
-                  {/* Change Password Field */}
-                  <div className="form-group mt-3">
-                    <label className="text-start w-100">
-                      Change Password:
-                      <input
-                        type="password"
-                        placeholder="Enter your new password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-100"
-                      />
-                    </label>
-                  </div>
+                  <Form.Group className="mt-3">
+                    <Form.Label>Change Password:</Form.Label>
+                    <Form.Control
+                      type="password"
+                      placeholder="Enter your new password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Form.Group>
                 </div>
               </div>
 
-              {/* Submit and Delete Buttons */}
               <div className="action-buttons mt-4 w-100">
-                <button type="submit" className="submit-button w-100 mb-3">
-                  Save Changes
-                </button>
-                <button type="button" onClick={handleDeleteAccount} className="delete-button w-100">
-                  Delete Account
-                </button>
+                <button type="submit" className="submit-button w-100 mb-3">Save Changes</button>
+                <button type="button" onClick={handleDeleteAccount} className="delete-button w-100">Delete Account</button>
               </div>
             </form>
           </div>
 
-          {/* Alert Messages */}
           <Alert message={error} type="error" />
           <Alert message={success} type="success" />
 
-          {/* Back to Dashboard */}
           <Link to="/dashboard" className="back-to-dashboard mt-4">
             ← Back to Dashboard
           </Link>
@@ -272,7 +288,6 @@ const AccountSettings = () => {
       <Footer />
     </div>
   );
-
 };
 
 export default AccountSettings;
