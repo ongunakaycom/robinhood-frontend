@@ -49,27 +49,50 @@ export const sendMessageToChatbot = async (message, market = 'coinbase', coin = 
     // Check if analysis object exists and format it
     if (data.data?.analysis) {
       const analysis = data.data.analysis;
-      return `📊 **BTC Analysis**
+      const signals = data.data.signals;
+      
+      return `🏹 **ROBIN HOOD CRYPTO ANALYSIS** 🏹
 
-    🎯 **Signal:** ${analysis.signal_direction || 'N/A'}
-    📈 **Current Price:** $${analysis.current_price?.toLocaleString() || 'N/A'}
-    📊 **Price Change:** ${analysis.price_change || 'N/A'}%
-    🔥 **Confidence:** ${analysis.confidence_level || 'N/A'}%
-    📋 **Summary:** ${analysis.technical_summary || 'N/A'}
-    🚀 **Next Move:** ${analysis.probable_next_move || 'N/A'}
-    ⚡ **Momentum:** ${analysis.momentum_status || 'N/A'}`;
+🎯 **Signal:** ${analysis.signal_direction || signals?.mathematical_signal || 'N/A'}
+📈 **Current Price:** $${(analysis.current_price || signals?.current_price)?.toLocaleString() || 'N/A'}
+📊 **Price Change:** ${(analysis.price_change || signals?.price_change_percent)?.toFixed(2) || 'N/A'}%
+🔥 **Confidence:** ${(analysis.confidence_level || signals?.signal_confidence || 0).toFixed(2) || 'N/A'}%
+
+📋 **Technical Summary:** ${analysis.technical_summary || 'Mathematical analysis based on RSI, EMA, and volume patterns'}
+
+🚀 **Next Move:** ${analysis.probable_next_move || 'Monitor key levels for breakout'}
+⚡ **Momentum:** ${analysis.momentum_status || (signals?.price_change_percent > 0 ? 'positive' : 'negative')}
+
+📊 **Key Levels:**
+${analysis.key_price_levels ? 
+  `• Support: $${analysis.key_price_levels.next_support?.toLocaleString() || 'N/A'}
+- Resistance: $${analysis.key_price_levels.next_resistance?.toLocaleString() || 'N/A'}
+- Stop Loss: $${analysis.key_price_levels.stop_loss_level?.toLocaleString() || 'N/A'}` : 
+  `• Support: $${signals?.indicators?.support_level?.toLocaleString() || 'N/A'}
+- Resistance: $${signals?.indicators?.resistance_level?.toLocaleString() || 'N/A'}`}
+
+💡 **Trading Recommendation:** ${analysis.trading_recommendation || 'Hold position and monitor volume confirmation'}
+
+⚠️ **Risk Assessment:** ${analysis.risk_assessment || 'Monitor volatility and volume for confirmation signals'}`;
     }
 
     // Fallback to signals data if analysis is missing
     if (data.data?.signals) {
       const signals = data.data.signals;
-      return `📊 **BTC Technical Data**
+      return `📊 **${coin.toUpperCase()} Technical Data**
 
-    💰 **Current Price:** $${signals.current_price?.toLocaleString() || 'N/A'}
-    📈 **Change:** ${signals.price_change_percent?.toFixed(2) || 'N/A'}%
-    🎯 **Signal:** ${signals.mathematical_signal || 'N/A'}
-    📊 **Confidence:** ${signals.signal_confidence?.toFixed(1) || 'N/A'}%
-    📋 **Pattern:** ${signals.synthetic_pattern || 'N/A'}`;
+💰 **Current Price:** $${signals.current_price?.toLocaleString() || 'N/A'}
+📈 **Change:** ${signals.price_change_percent?.toFixed(2) || 'N/A'}%
+🎯 **Signal:** ${signals.mathematical_signal || 'N/A'}
+📊 **Confidence:** ${signals.signal_confidence?.toFixed(2) || 'N/A'}%
+📋 **Pattern:** ${signals.synthetic_pattern?.replace(/_/g, ' ') || 'N/A'}
+
+📈 **Technical Indicators:**
+- RSI: ${signals.indicators?.rsi?.toFixed(1) || 'N/A'}
+- EMA(9): $${signals.indicators?.ema_9?.toLocaleString() || 'N/A'}
+- EMA(21): $${signals.indicators?.ema_21?.toLocaleString() || 'N/A'}
+- Volume Ratio: ${signals.indicators?.volume_ratio?.toFixed(2) || 'N/A'}
+- Buy/Sell Ratio: ${signals.indicators?.buy_sell_ratio?.toFixed(2) || 'N/A'}`;
     }
 
     return "⚠️ No analysis response from server.";
