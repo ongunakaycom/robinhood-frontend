@@ -10,44 +10,54 @@ const API_URL = "https://deep-seek-chat-bot-python.onrender.com";
  * @returns {Promise<string>} chatbot response text
  */
 export const sendMessageToChatbot = async (message, market = 'coinbase', coin = 'btcusd') => {
+  const url = `${API_URL}/${market}/${coin}`;
+  console.log('Sending message to chatbot:', url, { message });
+
   try {
-    const url = `${API_URL}/${market}/${coin}`;
+    // Add fetch timeout (10 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
+
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ request: message }),
+      signal: controller.signal,
     });
 
-    const text = await response.text(); // get raw text first
+    clearTimeout(timeoutId);
+
+    // If network-level error, response may be undefined
+    if (!response) throw new Error('No response from server');
+
+    const text = await response.text();
 
     if (!response.ok) {
       console.error('Backend error:', response.status, text);
-      throw new Error(`Backend responded with status ${response.status}`);
+      return `⚠️ Backend error: ${response.status}`;
     }
 
     let data;
     try {
       data = JSON.parse(text);
     } catch (jsonErr) {
-      console.error('JSON parse error:', jsonErr, 'Response text:', text);
-      throw new Error('Failed to parse backend JSON');
+      console.warn('Failed to parse JSON, returning raw text');
+      return text || '⚠️ Empty response from server';
     }
 
-    // Check for error fields anywhere expected
-    if (data.error) {
-      return data.error;
-    }
-    if (data.data?.analysis?.error) {
-      return data.data.analysis.error;
+    // Early returns for known error fields
+    if (data.error) return data.error;
+    if (data.data?.analysis?.error) return data.data.analysis.error;
+    if (data.data?.analysis?.raw_response) return data.data.analysis.raw_response;
+
+    return '⚠️ No analysis response from server';
+  } catch (err) {
+    console.error('sendMessageToChatbot catch error:', err);
+
+    if (err.name === 'AbortError') {
+      return '⏱ Request timed out. Please try again.';
     }
 
-    if (data.data?.analysis?.raw_response) {
-      return data.data.analysis.raw_response;
-    }
-
-    return "⚠️ No analysis response from server.";
-  } catch (error) {
-    console.error('sendMessageToChatbot catch error:', error);
-    return `Sorry, something went wrong. Please try again later.\nDetails: ${error.message}`;
+    return `❌ Something went wrong. Details: ${err.message}`;
   }
 };

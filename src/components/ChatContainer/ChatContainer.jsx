@@ -44,14 +44,22 @@ const ChatContainer = ({ userMessagesRef, displayName, userAvatar, error, setErr
     if (!inputText.trim()) return;
 
     setIsSending(true);
+
+    // Save the user's message first
+    await addMessage('user', inputText);
+
     try {
-      await addMessage('user', inputText);
+      // Send message to chatbot with error handling
       const responseText = await sendMessageToChatbot(inputText, preferredMarket, preferredCoin);
-      await addMessage('bot', responseText);
+
+      // If responseText is empty or contains error, provide fallback
+      const botMessage = responseText || '⚠️ Chatbot did not respond. Please try again later.';
+      await addMessage('bot', botMessage);
       setInputText('');
     } catch (err) {
-      console.error('Submit error:', err);
+      console.error('Chatbot submission error:', err);
       setError('Something went wrong when sending your message.');
+      await addMessage('bot', '⚠️ Failed to get a response from the chatbot.');
     } finally {
       setIsSending(false);
     }
