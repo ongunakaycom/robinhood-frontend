@@ -1,6 +1,10 @@
-# CRYPTO ANALYSER CHAT BOT
+# CryptoAnalysisAI - Data-Driven Crypto Analysis ChatBot
 
 A React-based frontend application for a stock trading platform, inspired by Robinhood. This project demonstrates modern React development with organized components, state management, and multi-language support.
+
+You can **try the live app** here: [robinhoodapp-65342.web.app](https://robinhoodapp-65342.web.app)
+
+---
 
 ## Table of Contents
 
@@ -11,6 +15,9 @@ A React-based frontend application for a stock trading platform, inspired by Rob
 * [Running the App](#running-the-app)
 * [Folder Overview](#folder-overview)
 * [Notes](#notes)
+* [User Testing](#user-testing)
+
+---
 
 ## Features
 
@@ -22,6 +29,8 @@ A React-based frontend application for a stock trading platform, inspired by Rob
 * Real-time chat interface components (`ChatContainer`, `MessageList`, `ChatInput`)
 * Responsive layout with reusable UI components
 * Cookie disclaimer and protected routes
+
+---
 
 ## Project Structure
 
@@ -45,6 +54,8 @@ src/
 * **Footer** – Page footer component
 * **I18** – Internationalization setup
 
+---
+
 ## Technologies
 
 * **React** – Frontend library
@@ -52,6 +63,8 @@ src/
 * **JavaScript (ES6+)** – Core logic
 * **React Router** – Navigation and protected routes
 * **Firebase** – Backend integration (frontend connected, backend not included for security)
+
+---
 
 ## Getting Started
 
@@ -75,6 +88,8 @@ npm install
 yarn install
 ```
 
+---
+
 ## Running the App
 
 ```bash
@@ -85,8 +100,19 @@ yarn start
 
 The app will run on `http://localhost:3000`.
 
+You can also **access the live demo** here: [robinhoodapp-65342.web.app](https://robinhoodapp-65342.web.app)
+
+---
+
 ## Notes
 
 * The backend for this project is Python-based and deployed on Render. For security reasons, backend code is not included.
 * This project focuses on frontend architecture, component design, state management, and React best practices.
-* Internationalization is available for English, Spanish.
+* Internationalization is available for English, Spanish, and Ukrainian.
+
+---
+
+## User Testing
+
+* Users can interact with the live demo on Firebase to test authentication, dashboard features, and the chat interface.
+* Feedback is welcome to improve usability, component performance, and UI design.
