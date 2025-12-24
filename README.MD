@@ -23,7 +23,7 @@ You can **try the live app** here: [robinhoodapp-65342.web.app](https://robinhoo
 
 * Fully componentized React frontend
 * State management using custom stores (`accountStore`, `tradeStore`)
-* Multi-language support (English, Spanish, Ukrainian)
+* Multi-language support (English, Spanish)
 * Authentication (Sign In, Sign Up, Password Recovery, Verification)
 * Dashboard with account settings and user interactions
 * Real-time chat interface components (`ChatContainer`, `MessageList`, `ChatInput`)
