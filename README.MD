@@ -108,7 +108,7 @@ You can also **access the live demo** here: [robinhoodapp-65342.web.app](https:/
 
 * The backend for this project is Python-based and deployed on Render. For security reasons, backend code is not included.
 * This project focuses on frontend architecture, component design, state management, and React best practices.
-* Internationalization is available for English, Spanish, and Ukrainian.
+* Internationalization is available for English, Spanish.
 
 ---
 
