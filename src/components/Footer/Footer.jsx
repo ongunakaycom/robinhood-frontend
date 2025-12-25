@@ -1,23 +1,6 @@
 import React from 'react';
 import './Footer.css';
-import {
-  FaInstagram,
-  FaTelegram,
-  FaYoutube,
-  FaFacebook
-} from 'react-icons/fa';
-
-
-
-// Twitter (X) logo (from public folder)
-const TwitterXLogo = () => (
-  <img
-    src="/img/twitter-x-seeklogo-2.svg"
-    alt="Twitter X"
-    width="40"
-    height="40"
-  />
-);
+import { FaInstagram, FaTelegram, FaYoutube } from 'react-icons/fa';
 
 // TradingView logo (from public folder)
 const TradingViewLogo = () => (
@@ -34,19 +17,9 @@ const Footer = () => {
     <footer className="dashboard-footer">
       <div className="footerCopy text-center">
 
-        {/* Twitter (X) */}
-        <a
-          href="https://x.com/crypto_public"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-link"
-        >
-          <TwitterXLogo />
-        </a>
-
         {/* Instagram */}
         <a
-          href="https://www.instagram.com/robinhoodtradebot/"
+          href="https://www.instagram.com/cryptocurrency_signals_channel/"
           target="_blank"
           rel="noopener noreferrer"
           className="social-link"
@@ -56,7 +29,7 @@ const Footer = () => {
 
         {/* Telegram */}
         <a
-          href="https://t.me/RobinHoodCryptoTradersClub"
+          href="https://t.me/BitcoinSignalsChannel"
           target="_blank"
           rel="noopener noreferrer"
           className="social-link"
@@ -66,22 +39,12 @@ const Footer = () => {
 
         {/* YouTube */}
         <a
-          href="https://www.youtube.com/@RobinHoodCryptoTradersClub"
+          href="https://www.youtube.com/@CryptoSignalsChannel"
           target="_blank"
           rel="noopener noreferrer"
           className="social-link"
         >
           <FaYoutube size={24} style={{ color: '#FF0000' }} />
-        </a>
-
-        {/* Facebook */}
-        <a
-          href="https://www.facebook.com/cryptotradersclubsocial"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-link"
-        >
-          <FaFacebook size={24} style={{ color: '#1877F2' }} />
         </a>
 
         {/* TradingView */}
