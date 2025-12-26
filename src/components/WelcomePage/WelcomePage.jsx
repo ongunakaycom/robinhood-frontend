@@ -46,7 +46,7 @@ function WelcomePage() {
             <p><img src="/img/aya-avatar.jpg" alt="Avatar" className="ayaphoto" /></p>
             <p>
               <a 
-                href="https://t.me/RobinHoodCryptoTradersClub" 
+                href="https://t.me/BitcoinSignalsChannel" 
                 target="_blank" 
                 rel="noopener noreferrer"
               >
